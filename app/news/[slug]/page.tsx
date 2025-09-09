@@ -60,7 +60,6 @@ export async function generateStaticParams() {
   }));
 }
 
-// Halaman Detail
 export default async function NewsDetail({
   params,
 }: {
@@ -103,34 +102,6 @@ export default async function NewsDetail({
           margin: '0 auto',
           padding: '0 20px',
         }}>
-          <a 
-            href="/news" 
-            style={{
-              marginBottom: '1.5rem',
-              display: 'inline-block',
-              backgroundColor: '#0a1e3a',
-              color: 'white',
-              border: 'none',
-              padding: '0.65rem 1.5rem',
-              borderRadius: '30px',
-              fontWeight: '600',
-              textDecoration: 'none',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 4px 12px rgba(10, 30, 58, 0.25)',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 16px rgba(10, 30, 58, 0.35)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(10, 30, 58, 0.25)';
-            }}
-          >
-            ← Kembali
-          </a>
-
           <div style={{
             width: '100%',
             height: '400px',
