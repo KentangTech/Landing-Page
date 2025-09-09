@@ -1,0 +1,126 @@
+.direksiSection {
+  padding: 4rem 1rem 5rem;
+  background-color: transparent;
+  text-align: center;
+  transition: all 1s ease;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.direksiSection.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5rem;
+}
+
+.card {
+  width: 250px;
+  text-align: center;
+  opacity: 0.7;
+  width: 250px;
+  transform: scale(0.9);
+  transition: all 0.6s ease;
+}
+
+.card.isVisible {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.circularCard {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #102a4e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  margin-bottom: 15px;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.circularCard:hover {
+  transform: scale(1.1);
+  border-color: #102a4e;
+  border-width: 5px;
+  box-shadow: 0 8px 24px rgba(77, 166, 255, 0.15);
+}
+
+.loaderPlaceholder,
+.imageLoaderContainer {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loaderPlaceholder {
+  background-color: #f0f0f0;
+  border: 2px solid #ccc;
+}
+
+.imageLoaderContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 1;
+}
+
+.loaderGif {
+  width: 120%;
+  height: 120%;
+  display: block;
+}
+
+.skeletonText {
+  width: 80%;
+  height: 20px;
+  background-color: #e0e0e0;
+  margin: 10px auto;
+  border-radius: 4px;
+}
+
+.skeletonSubtext {
+  width: 60%;
+  height: 16px;
+  background-color: #e0e0e0;
+  margin: 5px auto;
+  border-radius: 4px;
+}
+
+.errorMessage {
+  width: 100%;
+  height: 100%;
+  background-color: #f8d7da;
+  color: #721c24;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.personImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}

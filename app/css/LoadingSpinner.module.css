@@ -1,0 +1,143 @@
+.loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: opacity 0.3s ease;
+}
+
+.loadingContainer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Animasi Ikon Pencarian */
+.searchAnimation {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.searchIcon {
+  width: 60px;
+  height: 60px;
+  color: #3b82f6;
+  animation: pulse 2s infinite ease-in-out;
+  filter: drop-shadow(0 4px 10px rgba(59, 130, 246, 0.3));
+}
+
+.searchIcon svg {
+  width: 100%;
+  height: 100%;
+  stroke: #3b82f6;
+  transition: stroke 0.3s ease;
+}
+
+.searchIcon:hover svg {
+  stroke: #1d4ed8;
+}
+
+/* Aliran Data */
+.dataStream {
+  display: flex;
+  gap: 6px;
+  width: 120px;
+  justify-content: space-around;
+}
+
+.dataPacket {
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translateY(5px);
+  animation: floatUp 1.2s infinite ease-in-out;
+}
+
+@keyframes floatUp {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-15px);
+  }
+}
+
+/* Teks Loading */
+.loadingText {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+  animation: fadeIn 1s infinite alternate;
+}
+
+/* Animasi Tambahan */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.7;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}
+
+/* Responsif */
+@media (max-width: 480px) {
+  .loadingContainer {
+    gap: 1rem;
+  }
+
+  .searchIcon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .dataStream {
+    width: 100px;
+  }
+
+  .dataPacket {
+    width: 6px;
+    height: 6px;
+  }
+
+  .loadingText {
+    font-size: 1rem;
+  }
+}

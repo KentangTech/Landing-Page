@@ -1,0 +1,283 @@
+.main {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.container {
+  position: relative;
+  height: 300vh;
+  background: linear-gradient(
+    to bottom,
+    #010a15,
+    #041326,
+    #0a1e3a,
+    #102a4e,
+    #010a15
+  );
+  background-size: 200% 200%;
+  animation: gradientShift 15s ease-in-out infinite;
+  cursor: url("/icons/down.png") 12 12, auto !important;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(white 1px, transparent 1px);
+  background-size: 100px 100px;
+  animation: moveStars 100s linear infinite;
+  opacity: 0.3;
+  z-index: 1;
+}
+
+.stars2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(white 1px, transparent 1px);
+  background-size: 150px 150px;
+  animation: moveStars2 160s linear infinite;
+  opacity: 0.2;
+  z-index: 1;
+}
+
+@keyframes moveStars {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-500px, 1000px);
+  }
+}
+
+@keyframes moveStars2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(1000px, -500px);
+  }
+}
+
+.stickyMask {
+  display: flex;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  mask-image: url("/medias/landscape.svg");
+  mask-position: 52.35% center;
+  mask-repeat: no-repeat;
+  mask-size: 80%;
+  -webkit-mask-image: url("/medias/landscape.svg");
+  -webkit-mask-position: 52.35% center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 80%;
+}
+
+@media (orientation: portrait) {
+  .container {
+    height: 1000vh;
+  }
+
+  .stickyMask {
+    mask-image: url("/medias/portrait.svg");
+    mask-size: 80%;
+    mask-position: 52.35% center;
+    -webkit-mask-image: url("/medias/portrait.svg");
+    -webkit-mask-size: 80%;
+    -webkit-mask-position: 52.35% center;
+    height: 100vh;
+  }
+}
+
+@media (orientation: landscape) {
+  .container {
+    height: 300vh;
+  }
+
+  .stickyMask {
+    mask-image: url("/medias/landscape.svg");
+    mask-size: 80%;
+    mask-position: 52.35% center;
+    -webkit-mask-image: url("/medias/landscape.svg");
+    -webkit-mask-size: 80%;
+    -webkit-mask-position: 52.35% center;
+    height: 100vh;
+  }
+}
+
+.scrollButton {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) scale(1);
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  color: #fff;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  z-index: 2147483647;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  animation: bounce 2s infinite;
+  pointer-events: auto;
+}
+
+.scrollButton.hidden {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.5);
+  pointer-events: none;
+}
+
+.scrollButton.visible {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  pointer-events: auto;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  40% {
+    transform: translateX(-50%) translateY(6px) scale(1);
+  }
+  60% {
+    transform: translateX(-50%) translateY(3px) scale(1);
+  }
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.movingBanner {
+  display: flex;
+  width: max-content;
+  animation: scrollBanner 60s linear infinite;
+  gap: 40px;
+}
+
+.logoContainer img {
+  transition: transform 0.3s ease;
+}
+
+.logoContainer:hover img {
+  transform: scale(1.1);
+}
+
+@keyframes scrollBanner {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.logoContainer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.logoContainer:hover {
+  transform: scale(1.2);
+  z-index: 10;
+}
+
+.direksi-section {
+  padding: 5rem 1rem;
+  background-color: #f9f9f9;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.2s;
+  margin-top: 40px;
+}
+
+.direksi-section h2 {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 3rem;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rounded-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #4e73df;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.rounded-circle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(78, 115, 223, 0.25);
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease;
+}
+
+.fade-in.active {
+  opacity: 1;
+  transform: translateY(0);
+}

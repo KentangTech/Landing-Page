@@ -1,0 +1,11 @@
+# Set index.html sebagai halaman utama
+DirectoryIndex index.html
+
+# Aktifkan rewrite untuk routing Next.js
+RewriteEngine On
+RewriteBase /landing-page-new/
+
+# Jika bukan file/folder nyata, arahkan ke index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.html [L]

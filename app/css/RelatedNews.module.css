@@ -1,0 +1,42 @@
+.relatedContainer {
+  margin-top: 4rem;
+  padding: 2rem;
+  border-top: 1px solid #eee;
+}
+
+.relatedTitle {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.relatedCard {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+}
+
+.relatedImage {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.relatedCardTitle {
+  font-size: 0.95rem;
+  margin: 0.5rem 0 0.25rem;
+  color: #222;
+}
+
+.relatedMeta {
+  font-size: 0.8rem;
+  color: #666;
+}
