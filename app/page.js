@@ -1,4 +1,5 @@
 "use client";
+
 import { useRef, useEffect, useState } from "react";
 import Navigation from "./components/Navigation";
 import { useRouter } from "next/navigation";
@@ -60,7 +61,6 @@ export default function HomePage() {
         }
 
         await preloadImages();
-
         setIsLoading(false);
       } catch (error) {
         console.warn("Some resources failed to load, hiding spinner anyway:", error);
@@ -77,29 +77,23 @@ export default function HomePage() {
 
     return () => {
       clearTimeout(fallbackTimeout);
-      if (typeof window !== "undefined") {
-        window.removeEventListener("scroll", handleScroll);
-        window.removeEventListener("scroll", handleScrollTopButton);
-      }
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScrollTopButton);
     };
   }, []);
 
   useEffect(() => {
     if (!isLoading && isClient) {
-      if (typeof window !== "undefined") {
-        requestAnimationFrame(animate);
-        window.addEventListener("scroll", handleScroll);
-        window.addEventListener("scroll", handleScrollTopButton);
-        requestAnimationFrame(animateBanner);
-      }
-    }
+      requestAnimationFrame(animate);
+      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("scroll", handleScrollTopButton);
+      requestAnimationFrame(animateBanner);
 
-    return () => {
-      if (!isLoading && isClient && typeof window !== "undefined") {
+      return () => {
         window.removeEventListener("scroll", handleScroll);
         window.removeEventListener("scroll", handleScrollTopButton);
-      }
-    };
+      };
+    }
   }, [isLoading, isClient]);
 
   useEffect(() => {
@@ -122,7 +116,6 @@ export default function HomePage() {
     };
 
     handleHashChangeAndInitialScroll();
-
     window.addEventListener('hashchange', handleHashChangeAndInitialScroll);
 
     return () => {
