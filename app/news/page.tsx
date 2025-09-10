@@ -72,11 +72,11 @@ export default function NewsPage() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await fetch("/data-json/news.json");
-        if (!res.ok) throw new Error("Gagal memuat data berita");
+        const res = await fetch("/api/data/news");
+        if (!res.ok) throw new Error(`HTTP ${res.status}: Gagal memuat data berita`);
 
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : data?.data || [];
+        const rawData = await res.json();
+        const list = Array.isArray(rawData) ? rawData : rawData?.data || [];
 
         const formatted = list.map((item: any) => {
           const createdAt =
@@ -134,12 +134,12 @@ export default function NewsPage() {
     currentPage < totalPages && setCurrentPage(currentPage + 1);
   const goToPrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
 
-  const handleNewsClick = (title: string) => {
+  const handleNewsClick = (title: string, id: number) => {
     const slug = title
       .toLowerCase()
       .replace(/\s+/g, "-")
       .replace(/[^\w\-]/g, "");
-    router.push(`/news/${slug}`);
+    router.push(`/news/${id}-${slug}`);
   };
 
   if (loading) {
@@ -232,7 +232,7 @@ export default function NewsPage() {
                       <article
                         key={news.id}
                         className={styles.newsCard}
-                        onClick={() => handleNewsClick(news.title)}
+                        onClick={() => handleNewsClick(news.title, news.id)}
                       >
                         <div className={styles.imageContainer}>
                           <img
@@ -240,6 +240,9 @@ export default function NewsPage() {
                             alt={news.title}
                             className={styles.newsImage}
                             loading="lazy"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
+                            }}
                           />
                           <div className={styles.uploadedByBadge}>
                             Uploaded By: Admin
@@ -248,7 +251,7 @@ export default function NewsPage() {
                         <div className={styles.cardContent}>
                           <span
                             className={`${styles.categoryBadge} ${
-                              styles[news.category.toLowerCase()] || ""
+                              styles[news.category.toLowerCase().replace(/\s+/g, '')] || ""
                             }`}
                           >
                             {news.category}

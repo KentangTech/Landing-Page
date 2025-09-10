@@ -36,22 +36,24 @@ export default function SocialMediaCard() {
   useEffect(() => {
     const loadSocialMedia = async () => {
       try {
-        const res = await fetch("/data-json/social-media.json");
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        setLoading(true);
+
+        const res = await fetch("/api/data/social-media");
+        if (!res.ok) throw new Error(`HTTP ${res.status}: Gagal memuat data media sosial`);
 
         const rawData = await res.json();
 
-        const dataArray: RawSocialMediaItem[] = Array.isArray(rawData.data)
-          ? rawData.data
-          : Array.isArray(rawData)
+        const dataArray: RawSocialMediaItem[] = Array.isArray(rawData)
           ? rawData
+          : Array.isArray(rawData?.data)
+          ? rawData.data
           : [];
 
         if (!Array.isArray(dataArray)) {
           throw new Error("Format data media sosial tidak valid");
         }
 
-        const baseUrl = process.env.NEXT_PUBLIC_LARAVEL_API || "https://adminweb.grahasaranagresik.com";
+        const baseUrl = process.env.NEXT_PUBLIC_LARAVEL_API?.replace(/\/$/, "") || "https://adminweb.grahasaranagresik.com";
 
         const formatted: SocialMediaItem[] = dataArray.map((item: RawSocialMediaItem) => {
           const platforms: Platform[] = Array.isArray(item.platforms)
@@ -61,22 +63,30 @@ export default function SocialMediaCard() {
               }))
             : [];
 
+          let imageUrl = "/images/placeholder.jpg";
+          if (item.image) {
+            if (item.image.startsWith("http")) {
+              imageUrl = item.image;
+            } else {
+              const imagePath = item.image.startsWith("/") 
+                ? item.image.substring(1) 
+                : item.image;
+              imageUrl = `${baseUrl}/${imagePath}`;
+            }
+          }
+
           return {
             id: item.id || Math.random(),
             name: item.name || "Nama Tidak Diketahui",
             username: item.username || "",
-            image: item.image
-              ? item.image.startsWith("http")
-                ? item.image
-                : `${baseUrl}/${item.image}`.replace("//", "/")
-              : "/images/placeholder.jpg",
+            image: imageUrl,
             platforms,
           };
         });
 
         setSocialMediaData(formatted);
       } catch (error) {
-        console.error("Gagal ambil data media sosial dari /data-json/social-media.json:", error);
+        console.error("Gagal ambil data media sosial dari API:", error);
         setSocialMediaData([]);
       } finally {
         setLoading(false);
@@ -128,6 +138,9 @@ export default function SocialMediaCard() {
                           sizes="(max-width: 300px) 100vw"
                           style={{ objectFit: "contain" }}
                           loading="lazy"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
+                          }}
                         />
                       </div>
                     </div>
@@ -155,7 +168,7 @@ export default function SocialMediaCard() {
               </a>
             ))
           ) : (
-            <p>Tidak ada data media sosial.</p>
+            <p className={style.noData}>Tidak ada data media sosial.</p>
           )}
         </div>
       </div>

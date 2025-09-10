@@ -30,7 +30,9 @@ function useOnScreen(ref: RefObject<Element | null>): boolean {
     observer.observe(current);
 
     return () => {
-      observer.unobserve(current);
+      if (current) {
+        observer.unobserve(current);
+      }
     };
   }, [ref]);
 
@@ -47,12 +49,14 @@ export default function DireksiSection() {
     const loadDireksi = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/data-json/direksi.json");
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const res = await fetch("/api/data/direksi");
+        if (!res.ok) throw new Error(`HTTP ${res.status}: Gagal memuat data direksi`);
 
         const rawData = await res.json();
 
-        const dataArray = Array.isArray(rawData.data) ? rawData.data : rawData;
+        const dataArray = Array.isArray(rawData) ? rawData : rawData?.data || [];
+
         if (!Array.isArray(dataArray)) {
           throw new Error("Format data direksi tidak valid");
         }
@@ -68,7 +72,7 @@ export default function DireksiSection() {
 
         setDireksi(dataWithFlags);
       } catch (error) {
-        console.error("Gagal memuat data direksi.json:", error);
+        console.error("Gagal memuat data direksi dari API:", error);
         setDireksi([]);
       } finally {
         setLoading(false);
@@ -110,7 +114,19 @@ export default function DireksiSection() {
       {loading ? (
         renderSkeletonCards("skeleton")
       ) : orderedDireksi.length === 0 ? (
-        renderSkeletonCards("fallback")
+        <div className={styles.cardContainer}>
+          <div className={styles.card}>
+            <div className={styles.circularCard}>
+              <div className={styles.errorMessage}>Data tidak tersedia</div>
+            </div>
+            <h4 className="mb-1" style={{ fontWeight: "bold", color: "#222" }}>
+              Direksi
+            </h4>
+            <p className="text-muted" style={{ fontSize: "1.1rem" }}>
+              Informasi sedang dalam pembaruan
+            </p>
+          </div>
+        </div>
       ) : (
         <div className={styles.cardContainer}>
           {orderedDireksi.map((person, idx) => (

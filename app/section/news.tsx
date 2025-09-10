@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "@/app/css/NewsSection.module.css";
-import { getJsonData } from "@/lib/api";
 
 interface NewsItem {
   id: number;
@@ -13,6 +12,7 @@ interface NewsItem {
   category: string;
   uploaded_by: string;
   image: string;
+  created_at: string;
 }
 
 export default function NewsSection() {
@@ -26,40 +26,51 @@ export default function NewsSection() {
     const loadNews = async () => {
       try {
         setLoading(true);
-        const data = await getJsonData("news");
 
-        if (!data) {
-          throw new Error("Data berita tidak ditemukan");
-        }
+        const res = await fetch("/api/data/news");
+        if (!res.ok) throw new Error(`HTTP ${res.status}: Gagal memuat data`);
 
-        const newsArray = Array.isArray(data) ? data : data.data || [];
+        const rawData = await res.json();
+        const newsArray = Array.isArray(rawData) ? rawData : rawData?.data || [];
 
-        const formatted: NewsItem[] = newsArray.map((item: any) => ({
-          id: item.id || Math.random(),
-          judul: item.judul || "Untitled",
-          deskripsi:
-            item.deskripsi ||
-            item.desc ||
-            (item.content ? item.content.substring(0, 120) + "..." : "No description available."),
-          update_time: new Date(item.created_at || item.update_time || Date.now()).toLocaleDateString("en-US", {
+        const sortedNews = [...newsArray].sort((a, b) => {
+          const dateA = new Date(a.created_at || a.update_time || 0).getTime();
+          const dateB = new Date(b.created_at || b.update_time || 0).getTime();
+          return dateB - dateA;
+        });
+
+        const formatted: NewsItem[] = sortedNews.map((item: any) => {
+          const createdAt = item.created_at || item.update_time || new Date().toISOString();
+          const formattedDate = new Date(createdAt).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",
-          }),
-          category: item.category || "Uncategorized",
-          uploaded_by: item.uploaded_by || item.author || "Admin",
-          image: item.image
-            ? item.image.startsWith("http")
-              ? item.image
-              : item.image.startsWith("/")
-              ? `${process.env.NEXT_PUBLIC_LARAVEL_API || ""}${item.image}`
-              : `${process.env.NEXT_PUBLIC_LARAVEL_API || ""}/${item.image}`
-            : "/images/placeholder.jpg",
-        }));
+          });
+
+          return {
+            id: item.id || Math.random(),
+            judul: item.judul || "Untitled",
+            deskripsi:
+              item.deskripsi ||
+              item.desc ||
+              (item.content ? item.content.substring(0, 120) + "..." : "No description available."),
+            update_time: formattedDate,
+            category: item.category || "Uncategorized",
+            uploaded_by: item.uploaded_by || item.author || "Admin",
+            image: item.image
+              ? item.image.startsWith("http")
+                ? item.image
+                : item.image.startsWith("/")
+                ? `${process.env.NEXT_PUBLIC_LARAVEL_API || ""}${item.image}`
+                : `${process.env.NEXT_PUBLIC_LARAVEL_API || ""}/${item.image}`
+              : "/images/placeholder.jpg",
+            created_at: createdAt,
+          };
+        });
 
         setNewsData(formatted);
       } catch (error) {
-        console.error("Gagal memuat berita dari JSON:", error);
+        console.error("Gagal memuat berita dari API:", error);
         setNewsData([]);
       } finally {
         setLoading(false);
@@ -81,10 +92,13 @@ export default function NewsSection() {
           alt={news.judul}
           className={`${styles.newsImage} ${hoveredCard === news.id ? styles.imageHover : ""}`}
           loading="lazy"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
+          }}
         />
         <span
           className={`${styles.categoryBadge} ${
-            styles[news.category.toLowerCase()] || styles.defaultCategory
+            styles[news.category.toLowerCase().replace(/\s+/g, '')] || styles.defaultCategory
           }`}
         >
           {news.category}
@@ -94,7 +108,6 @@ export default function NewsSection() {
       <div className={styles.content}>
         <div className={styles.meta}>
           <span className={styles.update_time}>{news.update_time}</span>
-
           <span className={styles.uploadedByBadge}>
             By {news.uploaded_by}
           </span>

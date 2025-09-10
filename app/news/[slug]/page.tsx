@@ -1,15 +1,11 @@
-import fs from 'fs';
-import path from 'path';
 import { notFound } from 'next/navigation';
 import '@/app/globals.css';
-
 import Footer from '@/app/components/footer';
 import RelatedNews from './RelatedNews';
 import Navigation from '@/app/components/NavigationALT';
 
-const NEWS_JSON_PATH = path.join(process.cwd(), 'public', 'data-json', 'news.json');
-
 interface NewsItem {
+  id: number;
   judul: string;
   deskripsi?: string;
   content?: string;
@@ -19,28 +15,23 @@ interface NewsItem {
   date?: string;
 }
 
-function getNewsData(): NewsItem[] {
+export async function generateStaticParams() {
   try {
-    if (!fs.existsSync(NEWS_JSON_PATH)) {
-      console.error('❌ File tidak ditemukan:', NEWS_JSON_PATH);
-      return [];
-    }
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/data/news`, {
+      next: { revalidate: 300 },
+    });
 
-    const fileContent = fs.readFileSync(NEWS_JSON_PATH, 'utf-8');
-    const data = JSON.parse(fileContent);
+    if (!res.ok) return [];
 
-    const newsList = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
+    const newsList: NewsItem[] = await res.json();
 
-    if (!Array.isArray(newsList)) {
-      console.error('❌ Format data tidak valid');
-      return [];
-    }
-
-    return newsList.filter(item => 
-      item && typeof item.judul === 'string' && item.judul.trim() !== ''
-    );
+    return newsList
+      .filter(item => item?.judul)
+      .map(item => ({
+        slug: generateSlug(item.judul),
+      }));
   } catch (error) {
-    console.error('❌ Gagal baca news.json:', error);
+    console.error('Gagal generate static params:', error);
     return [];
   }
 }
@@ -53,24 +44,35 @@ function generateSlug(judul: string): string {
     .replace(/[^a-z0-9-]/g, '');
 }
 
-export async function generateStaticParams() {
-  const newsList = getNewsData();
-  return newsList.map(item => ({
-    slug: generateSlug(item.judul),
-  }));
-}
-
 export default async function NewsDetail({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const newsList = getNewsData();
-  const news = newsList.find(item => generateSlug(item.judul) === slug);
+
+  let news: NewsItem | null = null;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/data/news/${slug}`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) {
+      if (res.status === 404) {
+        notFound();
+      }
+      throw new Error(`API responded with status: ${res.status}`);
+    }
+
+    news = await res.json();
+  } catch (error) {
+    console.error('Error fetching news detail:', error);
+    notFound();
+  }
 
   if (!news) {
-    return notFound();
+    notFound();
   }
 
   const formattedDate = new Date(news.created_at || news.date || Date.now())
@@ -122,6 +124,9 @@ export default async function NewsDetail({
                 transition: 'transform 0.4s ease',
               }}
               loading="lazy"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/gambars/placeholder.jpg';
+              }}
             />
           </div>
 
