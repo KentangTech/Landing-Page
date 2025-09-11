@@ -1,26 +1,16 @@
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
-
   try {
-    const response = await fetch(`${process.env.LARAVEL_API_URL}/api/news`, {
-      headers: {
-        'Accept': 'application/json',
-      },
+    const LARAVEL_API_URL = process.env.LARAVEL_API_URL || 'https://adminweb.grahasaranagresik.com';
+    const response = await fetch(`${LARAVEL_API_URL}/api/news`, {
+      headers: { 'Accept': 'application/json' },
     });
 
-    if (!response.ok) {
-      throw new Error(`Laravel API responded with status: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(response.statusText);
 
     const data = await response.json();
-
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
-
     res.status(200).json(data);
   } catch (error) {
-    console.error('Error fetching news:', error);
-    res.status(500).json({ error: 'Gagal mengambil data dari Laravel' });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Gagal fetch data' });
   }
 }
